@@ -45,7 +45,7 @@ def ChaseBallBias(s):
             s.dT = bs.game_seconds - s.time
 
             tLb2 = set_dist(s.tL, goal, -BR)
-            tLb = tLb2 - s.pV * s.dT - 0.5 * s.G * s.dT * s.dT
+            tLb = tLb2 - s.pV * s.dT - 0.5 * a3l([0, 0, s.G]) * s.dT * s.dT
             ltLb = local(tLb, s.pL, s.pR)
             stLb = spherical(*ltLb)
 
@@ -70,7 +70,7 @@ def ChaseBallBias(s):
             s.tLb = tLb
             s.dspeed = 2300
             s.pfL = s.pL + s.pV * s.dT * 0.5 * s.G * s.dT ** 2
-            if dist3d(s.pfL, s.tLb) < 15:
+            if s.pfd < 95:
                 s.tLb = set_dist(s.ptL, goal, -BR)
                 s.pB = 0
         elif s.pB != 100:
