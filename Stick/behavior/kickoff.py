@@ -21,9 +21,6 @@ def ChaseKickoff(s):
     s.d2 = dist2d([s.x, s.y])
 
     s.dspeed = min(max(dist3d(s.oV) + 300, 1400), 2300)
-    if abs(s.pL[0]) < 4:
-        s.dspeed = 0
-        s.sB = 0
     if s.odT < .14 and s.oL[2] < 19:
         s.jumper = 1
     s.forwards = 1

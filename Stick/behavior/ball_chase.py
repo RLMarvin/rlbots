@@ -23,9 +23,9 @@ def ChaseBallBias(s):
         ogoal = deepcopy(s.ogoal)
         ogoal[0] = Range(s.tL[0], 999)
         direction = -mid_vect(s.pL - s.tL, ogoal - s.tL)
-        # direction *= np.array([1, 0.5, 0])
+        direction *= np.array([1, 0.5, 0.5])
         goal = direction * 9999 + s.tL
-        s.prd = min(s.prd, 340)
+        s.prd = 1
 
     s.tLb = set_dist(s.tL, goal, -BR)
     s.tLs = s.tLb
