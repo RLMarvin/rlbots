@@ -1,15 +1,17 @@
 import math
 
 try:
-    from pip import main as pipmain
-except ImportError:
-    from pip._internal import main as pipmain
-
-try:
     import numpy as np
 except ImportError:
-    pipmain(['install', 'numpy'])
-    import numpy as np
+    try:
+        from pip import main as pipmain
+    except ImportError:
+        from pip._internal import main as pipmain
+        pipmain(['install', 'numpy'])
+    try:
+        import numpy as np
+    except ImportError:
+        raise ImportError("Failed to install numpy automatically, please install manually using: 'pip install numpy'")
 
 
 U180 = 32768

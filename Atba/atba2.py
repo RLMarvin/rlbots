@@ -1,5 +1,18 @@
-import math, numpy as np
+import math
 from rlbot.agents.base_agent import BaseAgent
+
+try:
+    import numpy as np
+except ImportError:
+    try:
+        from pip import main as pipmain
+    except ImportError:
+        from pip._internal import main as pipmain
+        pipmain(['install', 'numpy'])
+    try:
+        import numpy as np
+    except ImportError:
+        raise ImportError("Failed to install numpy automatically, please install manually using: 'pip install numpy'")
 
 U = 32768
 

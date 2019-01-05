@@ -1,5 +1,17 @@
 import math
-import numpy as np
+
+try:
+    import numpy as np
+except ImportError:
+    try:
+        from pip import main as pipmain
+    except ImportError:
+        from pip._internal import main as pipmain
+        pipmain(['install', 'numpy'])
+    try:
+        import numpy as np
+    except ImportError:
+        raise ImportError("Failed to install numpy automatically, please install manually using: 'pip install numpy'")
 
 z3 = np.zeros(3)
 pi = math.pi
@@ -162,14 +174,17 @@ def curve1(x):
     s = x * x * x * 5e5
     return Range(s, 1)
 
+
 def curve3(x):
     s = abs(x)**0.25 * math.copysign(1, x)
     return Range(s, 1)
+
 
 def larg(v, l):
     if abs(v) < l:
         v = math.copysign(l, v)
     return v
+
 
 def mnofst(v, l):
     v = larg(v, l)
