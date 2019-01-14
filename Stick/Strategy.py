@@ -25,63 +25,67 @@ def plan(s):
             s.state = None
             s.in_prog2 = False
 
-        if s.pB == 100 or dist3d(s.ogoal, s.ptL) < 2000:
-            s.in_prog = False
-            s.state = None
+        if hasattr(s, 'large_pads') and s.large_pads:
 
-        if s.in_prog and s.state is not None:
-            s.state(s)
-            # print(s.state.__name__)
-            return
+            if s.pB == 100 or dist3d(s.ogoal, s.ptL) < 2000:
+                s.in_prog = False
+                s.state = None
 
-        ttog = dist3d(s.ogoal, s.bL) / max(s.bV.dot(normalize(s.ogoal - s.bL)), 1)
-        ttogaoh = s.odT + dist3d(s.otL, s.ogoal) / 6000
-
-        if not s.aerialing and s.pB < 18 and not s.obehind and s.active and not s.in_prog:
-            PickupBoost(s)
-            ttprog = min_travel_time(dist3d(s.tLs, s.ogoal) * 1.1, s.pyv, 64) + s.tt
-            safe = ttprog + .2 < min(ttog, ttogaoh)
-            if safe and s.tt < s.ott:
-                s.send_quick_chat(QuickChats.CHAT_EVERYONE, QuickChats.Information_NeedBoost)
-                s.in_prog = True
-                s.state = PickupBoost
+            if s.in_prog and s.state is not None:
+                s.state(s)
+                # print(s.state.__name__)
                 return
+
+            ttog = dist3d(s.ogoal, s.bL) / max(s.bV.dot(normalize(s.ogoal - s.bL)), 1)
+            ttogaoh = s.odT + dist3d(s.otL, s.ogoal) / 6000
+
+            if not s.aerialing and s.pB < 18 and not s.obehind and s.active and not s.in_prog:
+                PickupBoost(s)
+                ttprog = min_travel_time(dist3d(s.tLs, s.ogoal) * 1.1, s.pyv, 64) + s.tt
+                safe = ttprog + .2 < min(ttog, ttogaoh)
+                if safe and s.tt < s.ott:
+                    s.send_quick_chat(QuickChats.CHAT_EVERYONE, QuickChats.Information_NeedBoost)
+                    s.in_prog = True
+                    s.state = PickupBoost
+                    return
 
         ChaseBallBias(s)
 
-        blockable = min(abs(s.oglinex), abs(s.obglinex)) < 1500 and s.infront or dist3d(s.ogoal, s.ptL) < 3500
+        if abs(s.G) > 99:
 
-        odt_adv = s.pdT - s.odT
-        pdt_adv = -odt_adv
-        if odt_adv > .5 and s.bV.dot(s.ogoald) > 300 and not blockable and not s.in_prog2:
-            s.in_prog2 = True
-            s.send_quick_chat(QuickChats.CHAT_EVERYONE, QuickChats.Apologies_Cursing)
+            blockable = min(abs(s.oglinex), abs(s.obglinex)) < 1500 and s.infront or dist3d(s.ogoal, s.ptL) < 3500
 
-        if s.in_prog2:
+            odt_adv = s.pdT - s.odT
+            pdt_adv = -odt_adv
+            if odt_adv > .5 and s.bV.dot(s.ogoald) > 300 and not blockable and not s.in_prog2:
+                s.in_prog2 = True
+                # s.send_quick_chat(QuickChats.CHAT_EVERYONE, QuickChats.Apologies_Cursing)
 
-            n = 0.85
-            ogoal = deepcopy(s.ogoal) * n
-            loc = set_dist(s.tL, ogoal, min(dist3d(s.tL, ogoal), 3500))
-            direction = mid_vect(s.tL - loc, s.pL - loc)
-            direction *= np.array([1, 1, 0])
+            if s.in_prog2:
 
-            if pdt_adv > .5 or dist3d(s.ogoal, s.ptL) < 1500 or s.bV.dot(s.ogoald) < - 300 or dist3d(s.pL, loc) < 999:
-                s.in_prog2 = False
-                # s.send_quick_chat(QuickChats.CHAT_EVERYONE, QuickChats.Information_Incoming)
-                return
+                n = 0.85
+                ogoal = deepcopy(s.ogoal) * n
+                loc = set_dist(s.tL, ogoal, min(dist3d(s.tL, ogoal), 3500))
+                direction = mid_vect(s.tL - loc, s.pL - loc)
+                direction *= np.array([1, 1, 0])
 
-            aimBias(s, loc, loc + direction)
-            aimBiasC(s)
+                if pdt_adv > .5 or dist3d(s.ogoal, s.ptL) < 1500 or s.bV.dot(s.ogoald) < - 300 or dist3d(s.pL, loc) < 999:
+                    s.in_prog2 = False
+                    # s.send_quick_chat(QuickChats.CHAT_EVERYONE, QuickChats.Information_Incoming)
+                    return
 
-            s.tLs[2] = 0
+                aimBias(s, loc, loc + direction)
+                aimBiasC(s)
 
-            s.sx, s.sy, s.sz = local(s.tLs, s.pL, s.pR)
-            s.sd, s.sa, s.si = spherical(s.sx, s.sy + 50, s.sz)
-            s.a, s.i = s.sa, s.si
-            s.pB = 0
+                s.tLs[2] = 0
 
-            s.dspeed = 2310
-            s.flip = True
+                s.sx, s.sy, s.sz = local(s.tLs, s.pL, s.pR)
+                s.sd, s.sa, s.si = spherical(s.sx, s.sy + 50, s.sz)
+                s.a, s.i = s.sa, s.si
+                s.pB = 0
+
+                s.dspeed = 2310
+                s.flip = True
 
 
 def GatherInfo(s):

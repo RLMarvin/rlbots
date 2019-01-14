@@ -23,8 +23,8 @@ def ChaseBallBias(s):
         ogoal = deepcopy(s.ogoal)
         ogoal[0] = Range(s.tL[0], 999)
         direction = -mid_vect(s.pL - s.tL, ogoal - s.tL)
-        direction *= np.array([1, 0.5, 0.5])
-        goal = direction * 9999 + s.tL
+        direction *= np.array([1, 0.0, 0.5])
+        goal = direction * 3999 + s.tL
         s.prd = 1
 
     s.tLb = set_dist(s.tL, goal, -BR)
@@ -70,7 +70,7 @@ def ChaseBallBias(s):
             s.tLb = tLb
             s.dspeed = 2300
             s.pfL = s.pL + s.pV * s.dT * 0.5 * s.G * s.dT ** 2
-            if s.pfd < 95:
+            if s.pfd < 80:
                 s.tLb = set_dist(s.ptL, goal, -BR)
                 s.pB = 0
         elif s.pB != 100:
@@ -81,6 +81,8 @@ def ChaseBallBias(s):
         bp = s.get_ball_prediction_struct()
         i = 1
         step = 5
+
+        ttotal = 0
 
         while i < min(bp.num_slices - 1, 360):
 
@@ -110,7 +112,8 @@ def ChaseBallBias(s):
 
             i += step
 
-        aimBiasC(s)
+        if ttotal != 0:
+            aimBiasC(s)
 
     s.pfL = predict_CarLoc(s.pL, s.pV, s.dT, 1 / 20, g=s.G)
     s.fx, s.fy, s.fz = local(s.tL, s.pfL, s.pR)
@@ -143,12 +146,12 @@ def ChaseBallBias(s):
     s.shoot = s.pdT < s.odT + .2
     s.flip = s.odT > .5 and s.pL[2] < 999
 
-    s.renderer.begin_rendering(s.index)
-    s.renderer.draw_rect_3d(s.tLb, 7, 7, 1, s.renderer.white(), 1)
-    s.renderer.draw_rect_3d(s.tLs, 8, 8, 1, s.renderer.black(), 1)
-    s.renderer.draw_rect_3d(s.tL, 9, 9, 1, s.renderer.red(), 1)
-    s.renderer.draw_line_3d(s.tL, s.tLb, s.renderer.white())
-    s.renderer.end_rendering()
+    # s.renderer.begin_rendering(s.index)
+    # s.renderer.draw_rect_3d(s.tLb, 7, 7, 1, s.renderer.white(), 1)
+    # s.renderer.draw_rect_3d(s.tLs, 8, 8, 1, s.renderer.black(), 1)
+    # s.renderer.draw_rect_3d(s.tL, 9, 9, 1, s.renderer.red(), 1)
+    # s.renderer.draw_line_3d(s.tL, s.tLb, s.renderer.white())
+    # s.renderer.end_rendering()
 
 
 def aimBias(s, tL, goal, bR=93):

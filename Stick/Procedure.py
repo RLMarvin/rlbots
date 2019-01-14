@@ -13,10 +13,6 @@ def pre_process(s, packet):
 
 def data_format(s, packet):
 
-    # tick = s.get_rigid_body_tick()
-    # player_tick = tick.players[s.index].state
-    # ball_tick = tick.ball.state
-
     # player
     player = packet.game_cars[s.index]
 
@@ -92,10 +88,11 @@ def data_format(s, packet):
             padobj = BoostPad(i, a3v(pad.location))
             pad_type.append(padobj)
 
-    for pad_type in (s.large_pads, s.small_pads):
-        for pad in pad_type:
-            pad.is_active = packet.game_boosts[pad.index].is_active
-            pad.timer = packet.game_boosts[pad.index].timer
+    if hasattr(s, 'large_pads'):
+        for pad_type in (s.large_pads, s.small_pads):
+            for pad in pad_type:
+                pad.is_active = packet.game_boosts[pad.index].is_active
+                pad.timer = packet.game_boosts[pad.index].timer
 
     # if abs(s.G) > 1 or not hasattr(s, 'counter'):
     #     zero_g(s)
@@ -112,6 +109,12 @@ def init(s):
     s.aT = s.gT = s.sjT = s.djT = s.time
 
     s.dodge = s.jumper = 0
+
+    s.goal = a3l([0, 5120 * s.color, 0])
+    s.goald = a3l([0, 1 * s.color, 0])
+
+    s.ogoal = -s.goal
+    s.ogoald = -s.goald
 
     feedback(s)
 
@@ -190,6 +193,6 @@ class BoostPad:
 def zero_g(s):
     from rlbot.utils.game_state_util import GameState, GameInfoState
 
-    game_info_state = GameInfoState(world_gravity_z=-0.1)
+    game_info_state = GameInfoState(world_gravity_z=-0.1, game_speed=1.5)
     game_state = GameState(game_info=game_info_state)
     s.set_game_state(game_state)
